@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2020 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2020 Microsoft Corporation
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -17265,7 +17266,7 @@ enum hdd_external_acs_policy {
  */
 #define CFG_SAR_SAFETY_REQ_RESP_TIMEOUT          "gSarSafetyReqRespTimeout"
 #define CFG_SAR_SAFETY_REQ_RESP_TIMEOUT_MIN      (500)
-#define CFG_SAR_SAFETY_REQ_RESP_TIMEOUT_MAX      (3000)
+#define CFG_SAR_SAFETY_REQ_RESP_TIMEOUT_MAX      (1000)
 #define CFG_SAR_SAFETY_REQ_RESP_TIMEOUT_DEFAULT  (1000)
 
 /*
@@ -17291,7 +17292,7 @@ enum hdd_external_acs_policy {
  */
 #define CFG_SAR_SAFETY_REQ_RESP_RETRIES             "gSarSafetyReqRespRetry"
 #define CFG_SAR_SAFETY_REQ_RESP_RETRIES_MIN         (1)
-#define CFG_SAR_SAFETY_REQ_RESP_RETRIES_MAX         (10)
+#define CFG_SAR_SAFETY_REQ_RESP_RETRIES_MAX         (5)
 #define CFG_SAR_SAFETY_REQ_RESP_RETRIES_DEFAULT     (5)
 
 /*
