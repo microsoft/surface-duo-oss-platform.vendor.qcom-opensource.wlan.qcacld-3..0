@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2020 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2020 Microsoft Corporation
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -12720,7 +12721,10 @@ static void hdd_sar_unsolicited_timer_cb(void *user_data)
 
 	hdd_nofl_debug("Sar unsolicited timer expired");
 
+	qdf_atomic_set(&hdd_ctx->sar_safety_req_resp_event_in_progress, 1);
+
 	for (i = 0; i < hdd_ctx->config->sar_safety_req_resp_retry; i++) {
+		qdf_event_reset(&hdd_ctx->sar_safety_req_resp_event);
 		hdd_send_sar_unsolicited_event(hdd_ctx);
 		status = qdf_wait_for_event_completion(
 				&hdd_ctx->sar_safety_req_resp_event,
@@ -12728,6 +12732,7 @@ static void hdd_sar_unsolicited_timer_cb(void *user_data)
 		if (QDF_IS_STATUS_SUCCESS(status))
 			break;
 	}
+	qdf_atomic_set(&hdd_ctx->sar_safety_req_resp_event_in_progress, 0);
 
 	if (i >= hdd_ctx->config->sar_safety_req_resp_retry)
 		hdd_configure_sar_index(hdd_ctx,
@@ -12746,6 +12751,9 @@ static void hdd_sar_safety_timer_cb(void *user_data)
 void wlan_hdd_sar_unsolicited_timer_start(struct hdd_context *hdd_ctx)
 {
 	if (!hdd_ctx->config->enable_sar_safety)
+		return;
+
+	if (qdf_atomic_read(&hdd_ctx->sar_safety_req_resp_event_in_progress) > 0)
 		return;
 
 	if (QDF_TIMER_STATE_RUNNING !=
@@ -12791,6 +12799,7 @@ void wlan_hdd_sar_timers_init(struct hdd_context *hdd_ctx)
 			  QDF_TIMER_TYPE_SW,
 			  hdd_sar_unsolicited_timer_cb, hdd_ctx);
 
+	qdf_atomic_init(&hdd_ctx->sar_safety_req_resp_event_in_progress);
 	qdf_event_create(&hdd_ctx->sar_safety_req_resp_event);
 
 }
